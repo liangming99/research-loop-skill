@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Loop"
+  short_description: "Goal-driven experiment loop for agents"
+  default_prompt: "Use $research-loop to turn this goal into measurable experiments and run disciplined trials."
