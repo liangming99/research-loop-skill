@@ -46,11 +46,14 @@ PROGRAM = """# Research Program
 - keep: score 提升至少 0.100 且 stability 不低于 0.800。
 - rollback: score 回退或 stability 低于 0.800。
 - needs-review: 证据不足、正在运行或需要人工判断。
+- stop: 达到测试上限或没有新的可证伪假设时停止。
 
 ## Trial Budget
 - Max changed files: 3
 - Max runtime: 1 minute
 - Max trials before review: 3
+- Continue/stop rule: 每轮后判断是否还有可证伪假设。
+- Restore method for rollback: 丢弃当前 trial 改动并保留 trial record。
 """
 
 

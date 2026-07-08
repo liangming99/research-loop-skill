@@ -1,11 +1,11 @@
 ---
 name: research-loop
-description: Research loop for goal-driven agent work. Use when a user asks an agent to improve, optimize, investigate, benchmark, tune, compare approaches, run experiments, or make progress toward a measurable target across code, prompts, RAG systems, models, data pipelines, or workflows.
+description: This skill should be used when the user asks to "improve", "optimize", "benchmark", "tune", "compare approaches", "run experiments", "iterate", or make measurable progress across code, prompts, RAG systems, models, data pipelines, agent workflows, or research artifacts.
 ---
 
 # Research Loop
 
-Use a research loop to turn open-ended improvement work into auditable trials. Treat each trial as one hypothesis tested against a fixed program.
+Use a research loop to turn open-ended improvement work into auditable trials. Treat each trial as one hypothesis tested against a fixed program. Treat the skill itself as a guiding protocol by default, not as the optimization target.
 
 ## Step 1: Frame the Program
 
@@ -22,6 +22,8 @@ Before changing files, identify whether the user already supplied a program. A p
 
 If any item can change the target, architecture, data model, interface, UX, safety boundary, or acceptance criteria, stop and ask. Otherwise make the smallest explicit assumption and continue.
 
+If the requested target is a skill, prompt, strategy, or other agent-guiding artifact, confirm the editable artifact explicitly. Do not modify the active production skill itself unless the user clearly asks for that exact skill file to be changed. Prefer a copied, disposable, or candidate artifact for self-improvement tests.
+
 When the project has no `.research/program.md`, offer to create one. To initialize the directory, run:
 
 ```bash
@@ -30,7 +32,11 @@ python <skill-dir>/scripts/init_research_task.py --root <project-root>
 
 For the exact program fields, read `references/program-contract.md`.
 
-Completion criterion: a current program exists or the missing fields have been surfaced to the user.
+Before the first optimization trial, establish the baseline or current kept state: the artifacts being optimized, their metric values, guardrail status, and enough restore information to return to that state after a failed trial.
+
+Treat the trial budget as an upper bound, not a target to exhaust. The program must state how to decide whether to continue or stop after each trial.
+
+Completion criterion: a current program exists, the baseline/current kept state is known, or the missing fields have been surfaced to the user.
 
 ## Step 2: Make One Hypothesis
 
@@ -48,6 +54,8 @@ Completion criterion: one trial hypothesis can be disproved by the planned verif
 ## Step 3: Run the Trial
 
 Change only the editable scope. Do not alter frozen scope, benchmark data, tests, metric definitions, or verification commands unless the program explicitly says the trial is about those artifacts.
+
+Before editing, preserve the current kept state or identify the exact non-destructive restore method. A `rollback` decision must restore the kept artifacts or leave clear evidence that the trial changes were not retained.
 
 Keep the trial minimal. If the change needs a new abstraction, dependency, schema, public interface, or UX behavior, pause unless the program already authorizes that class of change.
 
@@ -72,18 +80,22 @@ Completion criterion: primary metric, guardrails, and command status are known o
 Use only the program decision rule:
 
 - `keep`: primary metric improves enough and all guardrails pass.
-- `rollback`: primary metric fails, guardrails fail, or the change violates scope.
+- `rollback`: primary metric fails, guardrails fail, the change violates scope, or the run cannot restore/identify the previous kept state.
 - `needs-review`: evidence is incomplete, noisy, or requires user judgment.
 
 Do not call a trial successful because the implementation looks plausible.
 
-Completion criterion: the trial has one decision and the evidence supports it.
+After each decision, also make a run-level continuation decision. Continue only when there is another specific falsifiable hypothesis with a plausible non-overfit mechanism. Stop early when the success threshold is reached, the next trials would mainly tune against a visible evaluator, repeated trials produce no useful movement, guardrails remain blocked, or the trial budget upper bound is reached.
+
+Completion criterion: the trial has one decision, the evidence supports it, and the next action is continue, stop, or ask for review.
 
 ## Step 6: Record the Trial
 
 Create or update a trial record under `.research/trials/`. Include hypothesis, changed files, commands, metrics, decision, and next question.
 
 For the exact record format, read `references/trial-record.md`.
+
+For `rollback`, record the restore evidence or the path to the saved failed attempt. For early stop, record the stop reason in the last trial's `Next Question` or in a run summary.
 
 Before finalizing, validate the task record:
 
@@ -114,3 +126,5 @@ For code tasks, use the repository's normal test and benchmark commands as verif
 For prompt, RAG, or agent workflow tasks, freeze the eval set before trials start. Do not edit examples, rubrics, or judge prompts during an optimization trial.
 
 For exploratory research without a measurable metric, the first trial is to create the metric or evaluation harness. Do not optimize before the judge exists.
+
+For self-improvement or AutoResearch-style tests, keep the active skill as frozen scope unless the user explicitly authorizes editing that exact production skill. Use a disposable target such as a copied skill, candidate skill, mini-skill, prompt, strategy file, or isolated artifact as editable scope. Freeze the eval suite before the loop starts, and promote changes to the production skill only through a separate human-reviewed decision.
