@@ -36,11 +36,14 @@ One sentence describing the outcome.
 - keep:
 - rollback:
 - needs-review:
+- stop:
 
 ## Trial Budget
 - Max changed files:
 - Max runtime:
 - Max trials before review:
+- Continue/stop rule:
+- Restore method for rollback:
 ```
 
 ## Rules
@@ -50,6 +53,10 @@ One sentence describing the outcome.
 - Treat unclear metrics as blockers, not as permission to invent success.
 - Prefer one primary metric. Use guardrails for everything that must not regress.
 - Keep scope narrow enough that one trial can be reviewed from its diff and record.
+- Treat "Max trials before review" as an upper bound. Do not run trials mechanically after the success threshold is reached, after repeated non-improvement, or when the next hypothesis would mainly overfit a visible evaluator.
+- Establish a baseline or current kept state before optimization. Record enough metric, guardrail, and restore information to compare each trial and roll back failed changes.
+- Keep `stop` as a run-level decision, not a trial outcome. Individual trials still decide `keep`, `rollback`, or `needs-review`.
+- For skill, prompt, or agent-strategy self-improvement tests, make the active production skill frozen scope unless the user explicitly authorizes editing it. Use a disposable copy, mini-skill, candidate skill, prompt, or strategy artifact as editable scope.
 
 ## Metric Examples
 

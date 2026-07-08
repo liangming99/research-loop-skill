@@ -34,11 +34,14 @@ TODO
 - keep: TODO
 - rollback: TODO
 - needs-review: TODO
+- stop: TODO
 
 ## Trial Budget
 - Max changed files: TODO
 - Max runtime: TODO
 - Max trials before review: TODO
+- Continue/stop rule: TODO
+- Restore method for rollback: TODO
 """
 
 
